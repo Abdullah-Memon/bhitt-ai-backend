@@ -1,0 +1,14 @@
+venv
+postman.json
+.env
+note.txt
+
+**.pyc
+__pycache__
+*.sqlite3
+*.log
+*.db
+*.pyo
+*.pyd
+*.egg-info
+*.pkl
