@@ -12,3 +12,5 @@ __pycache__
 *.pyd
 *.egg-info
 *.pkl
+
+app/models/general_chatbot/cache/

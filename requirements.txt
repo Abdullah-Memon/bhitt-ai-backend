@@ -21,3 +21,6 @@ rank_bm25
 langchain
 langchain_experimental
 langchain_together
+langgraph 
+langchain-core
+bs4

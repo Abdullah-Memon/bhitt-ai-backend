@@ -8,6 +8,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def safe_log(logger_func, message):
+    """Safely log messages that may contain Unicode characters"""
+    try:
+        logger_func(message)
+    except UnicodeEncodeError:
+        # Replace non-ASCII characters with their Unicode escape sequences
+        safe_message = message.encode('ascii', 'replace').decode('ascii')
+        logger_func(f"[Unicode content] {safe_message}")
+
 new_models_bp = Blueprint('new_models', __name__)
 
 @new_models_bp.route('/poetry/<path:query>', methods=['GET'])
@@ -22,7 +31,8 @@ def poetry_search(query):
         if not query or not isinstance(query, str) or not query.strip():
             return jsonify({'error': 'Query must be a non-empty string'}), 400
         
-        logger.info(f"Poetry search query: {query}")
+        # Safely log query with Unicode characters
+        safe_log(logger.info, f"Poetry search query: {query}")
         
         # Call the poetry search function
         response = query_sindhi_poetry(query.strip())
@@ -52,7 +62,8 @@ def general_chatbot(query):
         if not query or not isinstance(query, str) or not query.strip():
             return jsonify({'error': 'Query must be a non-empty string'}), 400
         
-        logger.info(f"General chatbot query: {query}")
+        # Safely log query with Unicode characters
+        safe_log(logger.info, f"General chatbot query: {query}")
         
         # Call the general chatbot function
         response = query_general_chatbot(query.strip())
@@ -91,7 +102,8 @@ def poetry_search_post():
         session_id = data.get('session_id', None)
         user_id = g.user_id  # From token_required decorator
         
-        logger.info(f"Poetry search query (POST): {query}, user: {user_id}, session: {session_id}")
+        # Safely log query with Unicode characters
+        safe_log(logger.info, f"Poetry search query (POST): {query}, user: {user_id}, session: {session_id}")
         
         # Call session-aware poetry search function
         result = query_sindhi_poetry_with_session(query.strip(), user_id, session_id)
@@ -129,7 +141,8 @@ def general_chatbot_post():
         session_id = data.get('session_id', None)
         user_id = g.user_id  # From token_required decorator
         
-        logger.info(f"General chatbot query (POST): {query}, user: {user_id}, session: {session_id}")
+        # Safely log query with Unicode characters
+        safe_log(logger.info, f"General chatbot query (POST): {query}, user: {user_id}, session: {session_id}")
         
         # Call session-aware general chatbot function
         result = query_general_chatbot_with_session(query.strip(), user_id, session_id)

@@ -20,13 +20,25 @@ def create_app():
     if not app.debug:
         log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
         os.makedirs(log_dir, exist_ok=True)
-        file_handler = RotatingFileHandler(os.path.join(log_dir, 'app.log'), maxBytes=10*1024*1024, backupCount=5)
+        file_handler = RotatingFileHandler(os.path.join(log_dir, 'app.log'), maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
         file_handler.setLevel(logging.INFO)
         formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
         file_handler.setFormatter(formatter)
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
         app.logger.info('Production logging is enabled.')
+    
+    # Configure console handler with UTF-8 encoding for development
+    if app.debug:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
+        console_handler.setFormatter(formatter)
+        # Set encoding to handle Unicode characters
+        if hasattr(console_handler.stream, 'reconfigure'):
+            console_handler.stream.reconfigure(encoding='utf-8')
+        app.logger.addHandler(console_handler)
+        app.logger.setLevel(logging.INFO)
 
     # Enable CORS for all routes (you can restrict origins if needed)
     # CORS(app)
